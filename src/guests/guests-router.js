@@ -19,18 +19,25 @@ guestRouter.route("/").post(jsonBodyParser, (req, res, next) => {
   //need to check capitalization of name from database and input
   GuestsService.isOnGuestList(knex, firstname, lastname)
     .then((name) => {
-      console.log(name)
-      //if no group just return
-      if (!name[0].family) {
-        res.status(200).json(name);
-      }
-      //if in group get a family
-      else {
-        getFamily(knex, name[0].family)
-          .then((data) => {
-            res.status(200).json(data);
-          })
-          .catch(next);
+      //if name does not exist in database 
+      if (name.length === 0) {
+        return res
+          .status(400)
+          .json({ error: `Name incorrectly spelled or does not exist.` });
+      } else {
+        //name exists
+        //if no group just return
+        if (!name[0].family) {
+          res.status(200).json(name);
+        }
+        //if in group get a family
+        else {
+          getFamily(knex, name[0].family)
+            .then((data) => {
+              res.status(200).json(data);
+            })
+            .catch(next);
+        }
       }
     })
     .catch(next);
