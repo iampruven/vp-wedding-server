@@ -1,6 +1,5 @@
 const express = require("express");
 const path = require("path");
-const { getFamily } = require("./guests-service");
 const GuestsService = require("./guests-service");
 const guestRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -32,7 +31,7 @@ guestRouter.route("/").post(jsonBodyParser, (req, res, next) => {
         }
         //if in group get a family
         else {
-          getFamily(knex, name[0].family)
+          GuestsService.getFamily(knex, name[0].family)
             .then((data) => {
               res.status(200).json(data);
             })
